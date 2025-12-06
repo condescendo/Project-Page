@@ -7,128 +7,194 @@
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-vsc-dark-plus.min.css" rel="stylesheet" />
 
     <style>
         :root {
-            --bg-color: #0b0c10;
-            --card-bg: #1f2833;
-            --text-main: #c5c6c7;
-            --accent: #66fcf1; /* "Tron" Cyan */
-            --accent-dim: #45a29e;
-            --code-bg: #111;
+            /* Neutral / Professional Palette */
+            --bg-color: #ffffff;
+            --text-primary: #111827;   /* Almost Black */
+            --text-secondary: #4b5563; /* Slate Grey */
+            --accent: #2563eb;         /* Professional Blue */
+            --border-color: #e5e7eb;   /* Light Grey Border */
+            --card-bg: #f9fafb;        /* Very Light Grey */
+            --code-bg: #1e1e1e;        /* VS Code Dark */
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body {
             background-color: var(--bg-color);
-            color: var(--text-main);
+            color: var(--text-primary);
             font-family: 'Inter', sans-serif;
             line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
         }
 
         /* --- Layout --- */
         .container {
-            max-width: 900px;
+            max-width: 850px;
             margin: 0 auto;
-            padding: 2rem 1.5rem;
+            padding: 4rem 1.5rem;
         }
 
-        section { margin-bottom: 4rem; }
+        section { margin-bottom: 5rem; }
 
         /* --- Typography --- */
-        h1, h2, h3 { color: white; margin-bottom: 1rem; }
-        
         h1 {
-            font-size: 2.5rem;
-            font-weight: 700;
-            background: -webkit-linear-gradient(0deg, var(--accent), #fff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            font-size: 2.25rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
         }
 
-        h2 { border-bottom: 1px solid var(--accent-dim); padding-bottom: 0.5rem; margin-top: 2rem;}
-        h3 { font-size: 1.2rem; color: var(--accent); margin-top: 1.5rem; }
+        h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-primary);
+        }
 
-        p { margin-bottom: 1rem; color: #aab; }
+        h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-top: 2rem;
+            margin-bottom: 0.75rem;
+            color: var(--text-primary);
+        }
+
+        p {
+            margin-bottom: 1.25rem;
+            color: var(--text-secondary);
+            font-size: 1.05rem;
+        }
         
-        code { font-family: 'JetBrains Mono', monospace; background: rgba(255,255,255,0.1); padding: 0.1rem 0.3rem; border-radius: 4px; font-size: 0.9em; }
+        /* Inline Code Styling */
+        code:not([class*="language-"]) {
+            font-family: 'JetBrains Mono', monospace;
+            background: #f3f4f6;
+            color: #d02868; /* Subtle Red/Pink for technical terms */
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-size: 0.9em;
+            border: 1px solid #e5e7eb;
+        }
 
         /* --- Header --- */
-        header { text-align: center; padding: 4rem 0; }
-        .subtitle { font-family: 'JetBrains Mono', monospace; color: var(--accent); font-size: 1rem; margin-top: 0.5rem; }
-        .links { margin-top: 1.5rem; }
-        .btn {
-            display: inline-block;
+        header { margin-bottom: 4rem; }
+        .subtitle {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            font-weight: 400;
+            margin-bottom: 2rem;
+        }
+        
+        /* The Button (The only thing that looks clickable) */
+        .btn-github {
+            display: inline-flex;
+            align-items: center;
+            background-color: #111827;
+            color: white;
             padding: 0.6rem 1.2rem;
-            border: 1px solid var(--accent);
-            color: var(--accent);
+            border-radius: 6px;
             text-decoration: none;
-            border-radius: 4px;
-            font-weight: 600;
-            transition: all 0.3s ease;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: background 0.2s;
         }
-        .btn:hover { background: var(--accent); color: var(--bg-color); }
+        .btn-github:hover { background-color: #374151; }
 
-        /* --- Feature Grid --- */
-        .grid {
+        /* --- Info Panels (Objectives & Optimization) --- */
+        /* These are designed to look like text blocks, NOT buttons */
+        .info-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 1.5rem;
-            margin-top: 1.5rem;
+            margin-top: 1rem;
         }
-        .card {
+
+        .info-panel {
             background: var(--card-bg);
             padding: 1.5rem;
             border-radius: 8px;
-            border: 1px solid #333;
-            transition: transform 0.2s;
+            border: 1px solid var(--border-color);
+            border-left: 4px solid var(--accent); /* Accent bar to denote "Information" */
         }
-        .card:hover { transform: translateY(-5px); border-color: var(--accent-dim); }
-        .card h4 { color: white; margin-bottom: 0.5rem; font-weight: 600; }
+        
+        .info-panel h4 {
+            color: var(--text-primary);
+            font-weight: 700;
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .info-panel p {
+            font-size: 0.95rem;
+            margin-bottom: 0;
+            line-height: 1.5;
+        }
 
         /* --- Code Blocks --- */
         pre[class*="language-"] {
             border-radius: 8px;
-            border: 1px solid #333;
-            margin: 1.5rem 0;
-            max-height: 500px;
+            font-size: 0.85rem !important;
+            margin: 1rem 0 2rem 0;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
         
-        .file-label {
+        .file-path {
             font-family: 'JetBrains Mono', monospace;
             font-size: 0.8rem;
-            color: #888;
-            margin-bottom: -1rem;
+            color: var(--text-secondary);
             display: block;
             margin-top: 1.5rem;
+            margin-bottom: 0.5rem;
         }
 
-        /* --- Tech Stack --- */
-        .stack-tags { display: flex; flex-wrap: wrap; gap: 0.8rem; }
-        .tag {
-            background: rgba(102, 252, 241, 0.1);
-            color: var(--accent);
-            padding: 0.4rem 0.8rem;
-            border-radius: 50px;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.85rem;
-            border: 1px solid rgba(102, 252, 241, 0.3);
+        /* --- Tech Stack Tags --- */
+        .stack-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
         }
+        .tech-tag {
+            background-color: #f3f4f6;
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        /* --- List --- */
+        ul {
+            margin-left: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--text-secondary);
+        }
+        li { margin-bottom: 0.5rem; }
 
         /* --- Footer --- */
         footer {
-            text-align: center;
-            margin-top: 4rem;
+            margin-top: 6rem;
+            border-top: 1px solid var(--border-color);
             padding-top: 2rem;
-            border-top: 1px solid #333;
+            text-align: center;
             font-size: 0.9rem;
-            color: #666;
+            color: #9ca3af;
         }
 
+        /* Mobile Adjustments */
+        @media (max-width: 600px) {
+            h1 { font-size: 1.8rem; }
+            .container { padding: 2rem 1.25rem; }
+        }
     </style>
 </head>
 <body>
@@ -136,10 +202,11 @@
     <div class="container">
         <header>
             <h1>Object-Centric Inverse Rendering</h1>
-            <div class="subtitle">CUDA-Accelerated Relighting Pipeline</div>
-            <div class="links">
-                <a href="#" class="btn">View on GitHub</a>
-            </div>
+            <div class="subtitle">A CUDA-Accelerated Pipeline for Relighting & Composition</div>
+            
+            <a href="#" class="btn-github">
+                View Project on GitHub
+            </a>
         </header>
 
         <section>
@@ -150,16 +217,16 @@
                 this system enables high-fidelity asset extraction and physically-based relighting.
             </p>
             
-            <div class="grid">
-                <div class="card">
+            <div class="info-grid">
+                <div class="info-panel">
                     <h4>Asset Extraction</h4>
                     <p>Clean separation of geometry without background artifacts using atomic visibility checks.</p>
                 </div>
-                <div class="card">
+                <div class="info-panel">
                     <h4>Scene Compositing</h4>
                     <p>Placing extracted objects into novel environments with accurate occlusion handling.</p>
                 </div>
-                <div class="card">
+                <div class="info-panel">
                     <h4>PBR Relighting</h4>
                     <p>Solves for Albedo, Roughness, and Metallic properties, allowing objects to react realistically to new lighting.</p>
                 </div>
@@ -175,7 +242,7 @@
 
             <h3>1. Custom CUDA Kernels</h3>
             <p>
-                To achieve object isolation without expensive post-processing, I rewrote the core <code>renderCUDA</code> kernel. 
+                To achieve object isolation without expensive post-processing, the core <code>renderCUDA</code> kernel was rewritten. 
                 Instead of standard alpha blending, the modified forward pass performs atomic checks directly on the GPU.
             </p>
             <ul>
@@ -183,7 +250,7 @@
                 <li><strong>Zero-Copy Logic:</strong> Visibility logic remains entirely on the VRAM during the forward pass, syncing to the host only for topological changes.</li>
             </ul>
 
-            <span class="file-label">File: submodules/diff-gaussian-rasterization/cuda_rasterizer/forward.cu</span>
+            <span class="file-path">File: submodules/diff-gaussian-rasterization/cuda_rasterizer/forward.cu</span>
 <pre><code class="language-cpp">// Snippet: Calculating thread indices for Gaussian buffer updates
 // Inside __global__ void renderCUDA(...)
 
@@ -214,35 +281,39 @@ for (int i = 0; i < rounds; i++, toDo -= BLOCK_SIZE) {
 
         <section>
             <h2>Optimization & Data Flow</h2>
-            <div class="card" style="margin-bottom: 1rem;">
-                <h4>Occlusion-Aware Pruning</h4>
-                <p>
-                    Implemented a Python-side controller that aggregates the CUDA-generated <code>seen</code> tensor via C++ bindings. 
-                    Points that fail to register a true status in the GPU buffer are pruned, reducing VRAM usage and eliminating internal geometry artifacts.
-                </p>
-            </div>
-            <div class="card">
-                <h4>Masked PBR Loss</h4>
-                <p>
-                    Engineered a custom loss pipeline that applies segmentation masks before gradient calculation. 
-                    This stabilizes the non-convex optimization of PBR parameters (Albedo, Roughness) by preventing the solver from fitting noise in empty space.
-                </p>
+            <p>The pipeline employs two strategies to ensure stability and memory efficiency.</p>
+            
+            <div class="info-grid">
+                <div class="info-panel">
+                    <h4>Occlusion-Aware Pruning</h4>
+                    <p>
+                        Implemented a Python-side controller that aggregates the CUDA-generated <code>seen</code> tensor via C++ bindings. 
+                        Points that fail to register a true status in the GPU buffer are pruned, reducing VRAM usage and eliminating internal geometry artifacts.
+                    </p>
+                </div>
+                <div class="info-panel">
+                    <h4>Masked PBR Loss</h4>
+                    <p>
+                        Engineered a custom loss pipeline that applies segmentation masks before gradient calculation. 
+                        This stabilizes the non-convex optimization of PBR parameters (Albedo, Roughness) by preventing the solver from fitting noise in empty space.
+                    </p>
+                </div>
             </div>
         </section>
 
         <section>
             <h2>Build Environment</h2>
-            <div class="stack-tags">
-                <span class="tag">Python 3.8</span>
-                <span class="tag">PyTorch</span>
-                <span class="tag">CUDA 11.6+</span>
-                <span class="tag">C++14</span>
-                <span class="tag">NVIDIA A100 Optimization</span>
+            <div class="stack-container">
+                <span class="tech-tag">Python 3.8</span>
+                <span class="tech-tag">PyTorch</span>
+                <span class="tech-tag">CUDA 11.6+</span>
+                <span class="tech-tag">C++14</span>
+                <span class="tech-tag">NVIDIA A100 Optimization</span>
             </div>
         </section>
 
         <footer>
-            <p>Project documentation generated for GitHub Pages.</p>
+            <p>© 2025 Project Portfolio.</p>
         </footer>
     </div>
 
