@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Object-Centric Inverse Rendering in Gaussian Splatting</title>
+    <title>Object-Centric Inverse Rendering in Gaussian Splatting </title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -13,14 +13,14 @@
 
     <style>
         :root {
-            /* Professional Dark Palette (GitHub Dark / VS Code Vibe) */
-            --bg-color: #0d1117;        /* Main background - Dark Slate */
-            --card-bg: #161b22;         /* Panels - Slightly lighter */
-            --text-primary: #c9d1d9;    /* Off-white text */
-            --text-secondary: #8b949e;  /* Muted grey text */
-            --accent: #58a6ff;          /* Soft Blue (Engineering standard) */
-            --border-color: #30363d;    /* Subtle borders */
-            --code-bg: #010409;         /* Deep black for code blocks */
+            /* Professional Dark Palette */
+            --bg-color: #0d1117;        
+            --card-bg: #161b22;         
+            --text-primary: #c9d1d9;    
+            --text-secondary: #8b949e;  
+            --accent: #58a6ff;          
+            --border-color: #30363d;    
+            --code-bg: #010409;         
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -31,6 +31,9 @@
             font-family: 'Inter', sans-serif;
             line-height: 1.6;
             -webkit-font-smoothing: antialiased;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
         }
 
         /* --- Layout --- */
@@ -38,6 +41,7 @@
             max-width: 850px;
             margin: 0 auto;
             padding: 4rem 1.5rem;
+            flex: 1; 
         }
 
         section { margin-bottom: 5rem; }
@@ -74,6 +78,8 @@
             font-size: 1.05rem;
         }
         
+        strong { color: #e1e4e8; font-weight: 600; }
+
         /* Inline Code Styling */
         code:not([class*="language-"]) {
             font-family: 'JetBrains Mono', monospace;
@@ -93,8 +99,7 @@
             font-family: 'JetBrains Mono', monospace;
         }
 
-        /* --- Info Panels (Objectives & Optimization) --- */
-        /* Styled to look like static cards, distinct from background */
+        /* --- Info Panels --- */
         .info-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -107,7 +112,6 @@
             padding: 1.5rem;
             border-radius: 6px;
             border: 1px solid var(--border-color);
-            /* A subtle left border to group them visually without looking like a button */
             border-left: 3px solid var(--accent); 
         }
         
@@ -126,31 +130,20 @@
         }
 
         /* --- Code Blocks --- */
-        /* Scrollable and distinct color */
         pre[class*="language-"] {
             background: var(--code-bg) !important;
             border-radius: 8px;
             border: 1px solid var(--border-color);
             margin: 1rem 0 2rem 0;
             font-size: 0.85rem !important;
-            /* Scrollbar styling */
             overflow-x: auto; 
         }
         
         /* Custom Scrollbar for code blocks */
-        pre[class*="language-"]::-webkit-scrollbar {
-            height: 8px;
-        }
-        pre[class*="language-"]::-webkit-scrollbar-track {
-            background: var(--code-bg); 
-        }
-        pre[class*="language-"]::-webkit-scrollbar-thumb {
-            background: #30363d; 
-            border-radius: 4px;
-        }
-        pre[class*="language-"]::-webkit-scrollbar-thumb:hover {
-            background: #58a6ff; 
-        }
+        pre[class*="language-"]::-webkit-scrollbar { height: 8px; }
+        pre[class*="language-"]::-webkit-scrollbar-track { background: var(--code-bg); }
+        pre[class*="language-"]::-webkit-scrollbar-thumb { background: #30363d; border-radius: 4px; }
+        pre[class*="language-"]::-webkit-scrollbar-thumb:hover { background: #58a6ff; }
 
         .file-path {
             font-family: 'JetBrains Mono', monospace;
@@ -169,7 +162,7 @@
             gap: 0.75rem;
         }
         .tech-tag {
-            background-color: rgba(56, 139, 253, 0.15); /* Low opacity blue */
+            background-color: rgba(56, 139, 253, 0.15); 
             color: #58a6ff;
             border: 1px solid rgba(56, 139, 253, 0.4);
             padding: 0.3rem 0.8rem;
@@ -188,19 +181,53 @@
 
         /* --- Footer --- */
         footer {
-            margin-top: 6rem;
             border-top: 1px solid var(--border-color);
-            padding-top: 2rem;
-            text-align: center;
+            padding: 3rem 0;
+            background-color: var(--card-bg);
+            margin-top: auto;
+        }
+        
+        .footer-content {
+            max-width: 850px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: center;
+            gap: 2.5rem;
+            padding: 0 1.5rem;
+        }
+
+        .social-link {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            color: #ffffff; /* UPDATED: Pure white */
+            text-decoration: none;
+            font-family: 'Inter', sans-serif;
             font-size: 0.9rem;
-            color: var(--text-secondary);
-            font-family: 'JetBrains Mono', monospace;
+            font-weight: 500;
+            transition: opacity 0.2s ease;
+        }
+
+        .social-link:hover {
+            opacity: 0.8;
+            color: var(--accent); /* Optional: slight blue tint on hover */
+        }
+
+        .social-link svg {
+            width: 18px; /* UPDATED: Smaller size */
+            height: 18px;
+            fill: currentColor;
         }
 
         /* Mobile Adjustments */
         @media (max-width: 600px) {
             h1 { font-size: 2rem; }
             .container { padding: 2rem 1.25rem; }
+            .footer-content {
+                flex-direction: column;
+                align-items: center;
+                gap: 1.5rem;
+            }
         }
     </style>
 </head>
@@ -209,97 +236,100 @@
     <div class="container">
         <header>
             <h1>Object-Centric Inverse Rendering</h1>
-            <div class="subtitle">A CUDA-Accelerated Pipeline for Relighting & Composition</div>
+            <div class="subtitle">A Hybrid Python/CUDA Pipeline for Relighting</div>
         </header>
 
         <section>
-            <h2>Core Objective</h2>
+            <h2>Project Overview</h2>
             <p>
-                This project engineers a low-level extension to the <strong>Global Illumination Gaussian Splatting (GI-GS)</strong> pipeline. 
-                By mathematically decomposing scenes into discrete "Object" and "Background" entities at the rasterization level, 
-                this system enables high-fidelity asset extraction and physically-based relighting.
+                This project integrates <strong>Object-Centric 3D Reconstruction</strong> into the Global Illumination Gaussian Splatting (GI-GS) pipeline. 
+                The goal is to create a robust Inverse Rendering framework capable of extracting individual objects from real-world scenes—separating 
+                them from their background artifacts—to enable downstream tasks such as scene compositing and physically-based relighting.
             </p>
-            
-            <div class="info-grid">
-                <div class="info-panel">
-                    <h4>Asset Extraction</h4>
-                    <p>Clean separation of geometry without background artifacts using atomic visibility checks.</p>
-                </div>
-                <div class="info-panel">
-                    <h4>Scene Compositing</h4>
-                    <p>Placing extracted objects into novel environments with accurate occlusion handling.</p>
-                </div>
-                <div class="info-panel">
-                    <h4>PBR Relighting</h4>
-                    <p>Solves for Albedo, Roughness, and Metallic properties, allowing objects to react realistically to new lighting.</p>
-                </div>
-            </div>
+            <p>
+                By modifying the rasterization backend to support visibility tracking and updating the frontend optimization logic to handle 
+                segmentation masks, this pipeline solves for material properties (Albedo, Roughness, Metallic) only on valid object geometry, 
+                eliminating background noise and "floaters."
+            </p>
         </section>
 
         <section>
-            <h2>Systems Engineering & CUDA Architecture</h2>
+            <h2>System Architecture</h2>
             <p>
-                The primary contribution is a modification of the underlying C++/CUDA rasterization backend (based on <code>diff-gaussian-rasterization</code>) 
-                to support dynamic visibility tracking and memory management.
+                The system is architected as a hybrid Python/C++ stack. High-level scene management, differentiable optimization, and loss 
+                computation are handled in PyTorch (Python), while heavy-duty visibility computation and rendering are offloaded to custom CUDA kernels.
             </p>
 
-            <h3>1. Custom CUDA Kernels</h3>
+            <h3>1. Python Integration & Logic Flow</h3>
             <p>
-                To achieve object isolation without expensive post-processing, the core <code>renderCUDA</code> kernel was rewritten. 
-                Instead of standard alpha blending, the modified forward pass performs atomic checks directly on the GPU.
+                The integration of Object-Centric logic into the PBR pipeline required substantial re-engineering of the training loop and data structures.
             </p>
             <ul>
-                <li><strong>Device Memory Management:</strong> Allocated a custom boolean tensor (<code>seen</code>) on the GPU to track visibility persistence.</li>
-                <li><strong>Zero-Copy Logic:</strong> Visibility logic remains entirely on the VRAM during the forward pass, syncing to the host only for topological changes.</li>
+                <li><strong>Masked Data Pipeline:</strong> Extended <code>dataset_readers</code> to ingest RGBA images or separate mask files. These are uploaded to VRAM as ground truth for object isolation.</li>
+                <li><strong>Dual-Stage Optimization:</strong> Re-architected <code>train.py</code> to ensure object constraints persist across both Geometry (Shape) and PBR (Material) stages.</li>
+                <li><strong>Topology Controller:</strong> Implemented a controller in <code>gaussian_model.py</code> that aggregates visibility data from CUDA and dynamically executes pruning.</li>
             </ul>
 
-            <span class="file-path">File: submodules/diff-gaussian-rasterization/cuda_rasterizer/forward.cu</span>
-<pre><code class="language-cpp">// Snippet: Calculating thread indices for Gaussian buffer updates
-// Inside __global__ void renderCUDA(...)
+            <span class="file-path">Implementation Snapshot: Masked PBR Loss (Python)</span>
+<pre><code class="language-python"># excerpt from train.py
+# PBR Stage: Optimization of Material Properties
 
-// 1. Calculate pixel and thread identifiers
-auto block = cg::this_thread_block();
-uint32_t pix_id = W * pix.y + pix.x;
+# 1. Retrieve rendered PBR maps and GT images
+pred_albedo = render_pkg['albedo_map']
+gt_image = viewpoint_cam.original_image.cuda()
 
-// 2. Iterate over Gaussian batches (Collaborative fetching)
-for (int i = 0; i < rounds; i++, toDo -= BLOCK_SIZE) {
-    __syncthreads(); // Sync shared memory load
+# 2. Apply Segmentation Masks
+# This ensures gradients are only backpropagated for pixels belonging to the object
+if dataset.use_object_mask:
+    object_mask = viewpoint_cam.object_mask.cuda()
+    gt_image = gt_image * object_mask
+    pred_albedo = pred_albedo * object_mask
 
-    // 3. Per-thread processing
-    for (int j = 0; !done && j < min(BLOCK_SIZE, toDo); j++) {
-        
-        // Compute alpha contribution (Equation 2 from 3DGS paper)
-        float alpha = min(0.99f, con_o.w * exp(power));
-        
-        // CUSTOM VISIBILITY LOGIC:
-        // Direct buffer access to mark geometry as 'seen' if it contributes.
-        // Utilizes rasterizer's inherent depth ordering to avoid raycasting.
-        if (alpha > 0.0f) {
-            seen[collected_id[j]] = true; 
-        }
-        // ... (Standard blending continues) ...
-    }
+# 3. Calculate Loss (L1 + Regularization)
+pbr_loss = l1_loss(pred_albedo, gt_image)
+total_loss = pbr_loss + (lambda_bg * background_loss)</code></pre>
+
+            <h3>2. Custom CUDA Kernels (Backend)</h3>
+            <p>
+                To support the Python logic without computational overhead, I modified the underlying <code>diff-gaussian-rasterization</code> C++ submodule.
+            </p>
+            <ul>
+                <li><strong>Direct Memory Access:</strong> Allocated a persistent boolean tensor, <code>seen</code>, directly on the GPU to track contributions across millions of iterations.</li>
+                <li><strong>Kernel Modification:</strong> Rewrote the <code>renderCUDA</code> kernel in <code>forward.cu</code>. Instead of just accumulating color, the kernel performs an atomic check on the alpha contribution of every thread.</li>
+            </ul>
+
+            <span class="file-path">Snippet: submodules/diff-gaussian-rasterization/cuda_rasterizer/forward.cu</span>
+<pre><code class="language-cpp">// Inside the forward rendering kernel
+// Per-thread processing of Gaussian splats
+
+if (alpha > 0.0f) {
+    // Direct Global Memory Write
+    // Flags the Gaussian as 'visible' without needing a separate ray-casting pass
+    seen[collected_id[j]] = true; 
 }</code></pre>
+
+            <h3>3. Bridging Python and C++</h3>
+            <p>
+                The project uses <strong>Pybind11</strong> to expose the new CUDA functionality to PyTorch. The Python <code>render()</code> 
+                function receives the <code>seen</code> tensor from the C++ return tuple. This tensor is passed to the <code>GaussianModel</code> 
+                class in Python, which accumulates the state and decides when to trigger topological pruning (deletion of points).
+            </p>
         </section>
 
         <section>
-            <h2>Optimization & Data Flow</h2>
-            <p>The pipeline employs two strategies to ensure stability and memory efficiency.</p>
-            
+            <h2>Key Features & Results</h2>
             <div class="info-grid">
                 <div class="info-panel">
                     <h4>Occlusion-Aware Pruning</h4>
-                    <p>
-                        Implemented a Python-side controller that aggregates the CUDA-generated <code>seen</code> tensor via C++ bindings. 
-                        Points that fail to register a true status in the GPU buffer are pruned, reducing VRAM usage and eliminating internal geometry artifacts.
-                    </p>
+                    <p>Successfully removes internal geometry that is hidden inside the object, resulting in hollow, clean meshes suitable for physics simulations.</p>
                 </div>
                 <div class="info-panel">
-                    <h4>Masked PBR Loss</h4>
-                    <p>
-                        Engineered a custom loss pipeline that applies segmentation masks before gradient calculation. 
-                        This stabilizes the non-convex optimization of PBR parameters (Albedo, Roughness) by preventing the solver from fitting noise in empty space.
-                    </p>
+                    <h4>Artifact-Free Relighting</h4>
+                    <p>By forcing the background alpha to zero, the inverse rendering solver produces clean Albedo maps, allowing the extracted object to be relit in new HDR environments without "ghosting."</p>
+                </div>
+                <div class="info-panel">
+                    <h4>Memory Efficiency</h4>
+                    <p>Pruning unseen points reduces the total Gaussian count, significantly lowering VRAM requirements during the memory-intensive PBR stage.</p>
                 </div>
             </div>
         </section>
@@ -308,15 +338,19 @@ for (int i = 0; i < rounds; i++, toDo -= BLOCK_SIZE) {
             <h2>Build Environment</h2>
             <div class="stack-container">
                 <span class="tech-tag">Python 3.8</span>
-                <span class="tech-tag">PyTorch</span>
-                <span class="tech-tag">CUDA 11.6+</span>
                 <span class="tech-tag">C++14</span>
-                <span class="tech-tag">NVIDIA A100 Optimization</span>
+                <span class="tech-tag">CUDA C</span>
+                <span class="tech-tag">PyTorch</span>
+                <span class="tech-tag">Pybind11</span>
+                <span class="tech-tag">OpenGL</span>
+                <span class="tech-tag">NVIDIA A100</span>
             </div>
         </section>
 
-        <footer>
-           <div class="footer-content">
+    </div>
+
+    <footer>
+        <div class="footer-content">
             <a href="mailto:anushreebajaj2002@gmail.com" class="social-link">
                 <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
                 <span>Email Me</span>
@@ -332,10 +366,10 @@ for (int i = 0; i < rounds; i++, toDo -= BLOCK_SIZE) {
                 <span>GitHub</span>
             </a>
         </div>
-        </footer>
-    </div>
+    </footer>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-c.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-cpp.min.js"></script>
 </body>
