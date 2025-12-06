@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Object-Centric Inverse Rendering | CUDA Pipeline</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+    <style>
+        :root {
+            --bg-color: #0b0c10;
+            --card-bg: #1f2833;
+            --text-main: #c5c6c7;
+            --accent: #66fcf1; /* "Tron" Cyan */
+            --accent-dim: #45a29e;
+            --code-bg: #111;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+        }
+
+        /* --- Layout --- */
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        section { margin-bottom: 4rem; }
+
+        /* --- Typography --- */
+        h1, h2, h3 { color: white; margin-bottom: 1rem; }
+        
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: -webkit-linear-gradient(0deg, var(--accent), #fff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        h2 { border-bottom: 1px solid var(--accent-dim); padding-bottom: 0.5rem; margin-top: 2rem;}
+        h3 { font-size: 1.2rem; color: var(--accent); margin-top: 1.5rem; }
+
+        p { margin-bottom: 1rem; color: #aab; }
+        
+        code { font-family: 'JetBrains Mono', monospace; background: rgba(255,255,255,0.1); padding: 0.1rem 0.3rem; border-radius: 4px; font-size: 0.9em; }
+
+        /* --- Header --- */
+        header { text-align: center; padding: 4rem 0; }
+        .subtitle { font-family: 'JetBrains Mono', monospace; color: var(--accent); font-size: 1rem; margin-top: 0.5rem; }
+        .links { margin-top: 1.5rem; }
+        .btn {
+            display: inline-block;
+            padding: 0.6rem 1.2rem;
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .btn:hover { background: var(--accent); color: var(--bg-color); }
+
+        /* --- Feature Grid --- */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        .card {
+            background: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid #333;
+            transition: transform 0.2s;
+        }
+        .card:hover { transform: translateY(-5px); border-color: var(--accent-dim); }
+        .card h4 { color: white; margin-bottom: 0.5rem; font-weight: 600; }
+
+        /* --- Code Blocks --- */
+        pre[class*="language-"] {
+            border-radius: 8px;
+            border: 1px solid #333;
+            margin: 1.5rem 0;
+            max-height: 500px;
+        }
+        
+        .file-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            color: #888;
+            margin-bottom: -1rem;
+            display: block;
+            margin-top: 1.5rem;
+        }
+
+        /* --- Tech Stack --- */
+        .stack-tags { display: flex; flex-wrap: wrap; gap: 0.8rem; }
+        .tag {
+            background: rgba(102, 252, 241, 0.1);
+            color: var(--accent);
+            padding: 0.4rem 0.8rem;
+            border-radius: 50px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            border: 1px solid rgba(102, 252, 241, 0.3);
+        }
+
+        /* --- Footer --- */
+        footer {
+            text-align: center;
+            margin-top: 4rem;
+            padding-top: 2rem;
+            border-top: 1px solid #333;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Object-Centric Inverse Rendering</h1>
+            <div class="subtitle">CUDA-Accelerated Relighting Pipeline</div>
+            <div class="links">
+                <a href="#" class="btn">View on GitHub</a>
+            </div>
+        </header>
+
+        <section>
+            <h2>Core Objective</h2>
+            <p>
+                This project engineers a low-level extension to the <strong>Global Illumination Gaussian Splatting (GI-GS)</strong> pipeline. 
+                By mathematically decomposing scenes into discrete "Object" and "Background" entities at the rasterization level, 
+                this system enables high-fidelity asset extraction and physically-based relighting.
+            </p>
+            
+            <div class="grid">
+                <div class="card">
+                    <h4>Asset Extraction</h4>
+                    <p>Clean separation of geometry without background artifacts using atomic visibility checks.</p>
+                </div>
+                <div class="card">
+                    <h4>Scene Compositing</h4>
+                    <p>Placing extracted objects into novel environments with accurate occlusion handling.</p>
+                </div>
+                <div class="card">
+                    <h4>PBR Relighting</h4>
+                    <p>Solves for Albedo, Roughness, and Metallic properties, allowing objects to react realistically to new lighting.</p>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2>Systems Engineering & CUDA Architecture</h2>
+            <p>
+                The primary contribution is a modification of the underlying C++/CUDA rasterization backend (based on <code>diff-gaussian-rasterization</code>) 
+                to support dynamic visibility tracking and memory management.
+            </p>
+
+            <h3>1. Custom CUDA Kernels</h3>
+            <p>
+                To achieve object isolation without expensive post-processing, I rewrote the core <code>renderCUDA</code> kernel. 
+                Instead of standard alpha blending, the modified forward pass performs atomic checks directly on the GPU.
+            </p>
+            <ul>
+                <li><strong>Device Memory Management:</strong> Allocated a custom boolean tensor (<code>seen</code>) on the GPU to track visibility persistence.</li>
+                <li><strong>Zero-Copy Logic:</strong> Visibility logic remains entirely on the VRAM during the forward pass, syncing to the host only for topological changes.</li>
+            </ul>
+
+            <span class="file-label">File: submodules/diff-gaussian-rasterization/cuda_rasterizer/forward.cu</span>
+<pre><code class="language-cpp">// Snippet: Calculating thread indices for Gaussian buffer updates
+// Inside __global__ void renderCUDA(...)
+
+// 1. Calculate pixel and thread identifiers
+auto block = cg::this_thread_block();
+uint32_t pix_id = W * pix.y + pix.x;
+
+// 2. Iterate over Gaussian batches (Collaborative fetching)
+for (int i = 0; i < rounds; i++, toDo -= BLOCK_SIZE) {
+    __syncthreads(); // Sync shared memory load
+
+    // 3. Per-thread processing
+    for (int j = 0; !done && j < min(BLOCK_SIZE, toDo); j++) {
+        
+        // Compute alpha contribution (Equation 2 from 3DGS paper)
+        float alpha = min(0.99f, con_o.w * exp(power));
+        
+        // CUSTOM VISIBILITY LOGIC:
+        // Direct buffer access to mark geometry as 'seen' if it contributes.
+        // Utilizes rasterizer's inherent depth ordering to avoid raycasting.
+        if (alpha > 0.0f) {
+            seen[collected_id[j]] = true; 
+        }
+        // ... (Standard blending continues) ...
+    }
+}</code></pre>
+        </section>
+
+        <section>
+            <h2>Optimization & Data Flow</h2>
+            <div class="card" style="margin-bottom: 1rem;">
+                <h4>Occlusion-Aware Pruning</h4>
+                <p>
+                    Implemented a Python-side controller that aggregates the CUDA-generated <code>seen</code> tensor via C++ bindings. 
+                    Points that fail to register a true status in the GPU buffer are pruned, reducing VRAM usage and eliminating internal geometry artifacts.
+                </p>
+            </div>
+            <div class="card">
+                <h4>Masked PBR Loss</h4>
+                <p>
+                    Engineered a custom loss pipeline that applies segmentation masks before gradient calculation. 
+                    This stabilizes the non-convex optimization of PBR parameters (Albedo, Roughness) by preventing the solver from fitting noise in empty space.
+                </p>
+            </div>
+        </section>
+
+        <section>
+            <h2>Build Environment</h2>
+            <div class="stack-tags">
+                <span class="tag">Python 3.8</span>
+                <span class="tag">PyTorch</span>
+                <span class="tag">CUDA 11.6+</span>
+                <span class="tag">C++14</span>
+                <span class="tag">NVIDIA A100 Optimization</span>
+            </div>
+        </section>
+
+        <footer>
+            <p>Project documentation generated for GitHub Pages.</p>
+        </footer>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-c.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-cpp.min.js"></script>
+</body>
+</html>
