@@ -139,6 +139,21 @@
             background: #000;
         }
 
+        /* --- Image Wrapper --- */
+        .img-wrapper {
+            margin: 2rem 0;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+            background: var(--bg-color); /* Matches background instead of black */
+        }
+        
+        .img-wrapper img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
         video {
             width: 100%;
             height: auto;
@@ -276,14 +291,12 @@
                 position, covariance (shape), opacity, and view-dependent color via Spherical Harmonics.
             </p>
 
-            <div class="video-wrapper">
-                <video controls poster="placeholder-thumb-1.jpg">
-                    <source src="GaussianSplatting.png" type="img">
-                    Your browser does not support the video tag.
-                </video>
+           <div class="img-wrapper">
+                <img src="GaussianSplatting.png" alt="Standard 3DGS View Synthesis">
                 <div class="video-caption">Figure 1: Standard 3DGS View Synthesis (Baked Lighting)</div>
             </div>
 
+            
             <div class="info-grid">
                 <div class="info-panel">
                     <h4>The Capability</h4>
