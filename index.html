@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Object-Centric Inverse Rendering | Hybrid Pipeline</title>
+    <title>Object-Centric Inverse Rendering In Gaussian SPlatting </title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -118,7 +118,7 @@
         
         strong { color: var(--text-primary); font-weight: 600; }
 
-        /* --- NEW: Context Log (Replacing the Comparator Boxes) --- */
+        /* --- Context Log --- */
         .context-log {
             margin: 2rem 0;
             border-left: 2px solid var(--border-color);
@@ -130,11 +130,10 @@
             position: relative;
         }
 
-        /* The small dots on the timeline */
         .log-entry::before {
             content: '';
             position: absolute;
-            left: -2.4rem; /* Aligns with the border */
+            left: -2.4rem; 
             top: 6px;
             width: 10px;
             height: 10px;
@@ -152,22 +151,19 @@
             display: block;
         }
 
-        /* Style for the "Good" part (Greyed out to not distract) */
         .log-entry.baseline .log-label { color: #666; }
         .log-entry.baseline p { color: #666; }
         
-        /* Style for the "Problem" part (Highlighted) */
         .log-entry.target .log-label { color: var(--accent); font-weight: bold; }
         .log-entry.target::before { border-color: var(--accent); background: var(--accent); }
         .log-entry.target p { color: var(--text-primary); font-size: 1.1rem; }
 
 
-        /* --- NEW: Tech Specs (Replacing Bento Grid) --- */
-        /* Clean, border-based layout. No boxes. */
+        /* --- Specs Grid --- */
         .specs-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 3rem 2rem; /* Row gap, Column gap */
+            gap: 3rem 2rem; 
             margin-top: 2rem;
         }
 
@@ -203,33 +199,12 @@
             line-height: 1.5;
         }
         
-        /* Specific accent styling for the Metric number */
         .highlight-metric {
             color: var(--accent);
             font-size: 2rem;
         }
 
-        /* --- Media Wrappers --- */
-        .media-wrapper {
-            margin: 2rem 0;
-            border: 1px solid var(--border-color);
-            background: #000;
-            padding: 4px;
-        }
-        .media-wrapper video, .media-wrapper img {
-            width: 100%; height: auto; display: block;
-        }
-        .caption {
-            padding: 0.75rem;
-            background: var(--bg-card);
-            color: var(--text-secondary);
-            font-size: 0.8rem;
-            text-align: center;
-            border-top: 1px solid var(--border-color);
-            font-family: 'JetBrains Mono', monospace;
-        }
-
-        /* --- Clean Code Blocks (No Animation) --- */
+        /* --- Code Blocks --- */
         pre[class*="language-"] {
             background: var(--code-bg) !important;
             border: 1px solid var(--border-color);
@@ -284,69 +259,88 @@
 
     <div class="container">
         <header>
-            <h1>Object-Centric<br>Inverse Rendering</h1>
-            <div class="subtitle">A Hybrid Python/CUDA Pipeline</div>
+            <h1>Object-Centric<br>Inverse Rendering in Gaussian Splatting</h1>
+            <div class="subtitle">An ongoing project under the chair of Augmented Vision @ DFKI and RPTU kaiserslautern</div>
         </header>
 
         <section>
-            <h2>Context & Motivation</h2>
+            <h2>Core Objective</h2>
             <p>
-                3D Gaussian Splatting (3DGS) has revolutionized view synthesis with real-time inference speeds. However, the standard implementation relies on "baked radiance," meaning lighting and geometry are fused together.
+                This project engineers a low-level extension to the Global Illumination Gaussian Splatting (GI-GS) pipeline. By mathematically decomposing scenes into discrete <strong>"Object"</strong> and <strong>"Background"</strong> entities at the rasterization level, we move beyond simple view synthesis to full inverse rendering.
             </p>
+            
 
             <div class="context-log">
                 
                 <div class="log-entry baseline">
-                    <span class="log-label">Existing Capability</span>
-                    <p>Standard 3DGS offers high-fidelity reconstruction, but treats the scene as a static photo. Objects cannot be moved or relit without breaking realism.</p>
+                    <span class="log-label">Standard Pipeline</span>
+                    <p>Traditional 3DGS bakes lighting and geometry into a single representation. The scene is static; objects cannot be moved, and lighting cannot be changed without significant artifacts.</p>
                 </div>
 
                 <div class="log-entry target">
-                    <span class="log-label">Detected Limitation (Target)</span>
-                    <p>Current Inverse Rendering methods solve the scene globally. They fail to distinguish the <strong>Object of Interest</strong> from background noise, resulting in "floaters" and dirty albedo maps.</p>
+                    <span class="log-label">This Extension</span>
+                    <p>Allows for <strong>Asset Extraction</strong> without background artifacts, <strong>Scene Compositing</strong> into novel environments, and <strong>Physically-Based Relighting</strong> by solving for material properties (Albedo, Roughness, Metallic).</p>
                 </div>
 
-            </div>
-
-            <div class="media-wrapper">
-                <img src="GaussianSplatting.png" alt="Visualizing the artifact problem" style="min-height: 200px; object-fit: cover; background: #222;">
-                <div class="caption">Figure 1: The challenge of separating object from environment</div>
             </div>
         </section>
 
         <section>
-            <h2>Solution Architecture</h2>
+            <h2>Systems Engineering & CUDA Architecture</h2>
             <p>
-                This project bridges the gap by injecting <strong>Object-Centric Masking</strong> into the PBR optimization loop. It ensures that material properties (Albedo, Roughness) are only solved for valid geometry.
-            </p>
-
-            <h3>1. Logic Flow (Python)</h3>
-            <p>
-                Re-architected the <code>train.py</code> loop to enforce segmentation masks during the PBR stage. This prevents the optimizer from "hiding" loss in the background pixels.
+                The primary contribution is not just calling PyTorch functions, but modifying the underlying C++/CUDA rasterization backend to support dynamic visibility tracking and memory management.
             </p>
             
-            <span class="file-path">train.py (Snippet)</span>
-<pre><code class="language-python"># PBR Stage: Optimization of Material Properties
-if dataset.use_object_mask:
-    object_mask = viewpoint_cam.object_mask.cuda()
-    
-    # Mask the Ground Truth and the Prediction
-    # This ensures gradients are only calculated for the object
-    gt_image = gt_image * object_mask
-    pred_albedo = pred_albedo * object_mask
 
-pbr_loss = l1_loss(pred_albedo, gt_image)</code></pre>
-
-            <h3>2. Visibility Engine (CUDA)</h3>
+            <h3>1. Custom CUDA Kernels</h3>
             <p>
-                To handle this efficiently, I modified the <code>diff-gaussian-rasterization</code> backend. A custom CUDA kernel tracks per-gaussian visibility without needing expensive ray-casting.
+                To achieve object isolation without expensive post-processing, I rewrote the core <code>renderCUDA</code> kernel. 
+            </p>
+            <ul>
+                <li><strong>Device Memory Management:</strong> Allocated a custom boolean tensor (<code>seen</code>) directly on the GPU to track per-Gaussian visibility persistence across the training lifecycle.</li>
+                <li><strong>Zero-Copy Logic:</strong> Visibility logic remains entirely on the GPU during the forward pass, syncing to the host (Python) only when topological changes (pruning) are required.</li>
+            </ul>
+
+            <h3>2. Implementation Snapshot: Thread-Level Visibility</h3>
+            <p>
+                By injecting logic into the forward rasterization pass, the kernel now performs atomic checks. If a thread contributes to a pixel (alpha > threshold), it writes directly to the global memory buffer.
             </p>
 
-            <span class="file-path">cuda_rasterizer/forward.cu</span>
-<pre><code class="language-cpp">// Atomic visibility check
-if (alpha > 0.0f) {
-    seen[collected_id[j]] = true; // Flag for pruning
+            <span class="file-path">submodules/diff-gaussian-rasterization/cuda_rasterizer/forward.cu</span>
+<pre><code class="language-cpp">// Snippet from Inverse Renderer: Calculating thread indices for Gaussian buffer updates
+// Inside __global__ void renderCUDA(...)
+
+// 1. Calculate pixel and thread identifiers
+auto block = cg::this_thread_block();
+uint32_t pix_id = W * pix.y + pix.x;
+
+// 2. Iterate over Gaussian batches (Collaborative fetching)
+for (int i = 0; i < rounds; i++, toDo -= BLOCK_SIZE) {
+    __syncthreads(); // Sync shared memory load
+
+    // 3. Per-thread processing
+    for (int j = 0; !done && j < min(BLOCK_SIZE, toDo); j++) {
+        
+        // Compute alpha contribution (Equation 2 from 3DGS paper)
+        float alpha = min(0.99f, con_o.w * exp(power));
+        
+        // CUSTOM VISIBILITY LOGIC:
+        // Direct buffer access to mark geometry as 'seen' if it contributes to the pixel.
+        // Utilizes the rasterizer's inherent depth ordering to avoid raycasting.
+        if (alpha > 0.0f) {
+            seen[collected_id[j]] = true; 
+        }
+        // ... (Standard blending continues) ...
+    }
 }</code></pre>
+
+            <h3>3. Optimization & Data Flow</h3>
+            <p>
+                <strong>Occlusion-Aware Pruning:</strong> A Python-side controller aggregates the CUDA-generated <code>seen</code> tensor via C++ bindings. Points that fail to register a true status in the GPU buffer are pruned, reducing VRAM usage and eliminating internal geometry artifacts.
+            </p>
+            <p>
+                <strong>Masked PBR Loss:</strong> I engineered a custom loss pipeline that applies segmentation masks before gradient calculation. This stabilizes the non-convex optimization of PBR parameters (Albedo, Roughness) by preventing the solver from fitting noise in empty space.
+            </p>
         </section>
 
         <section>
@@ -355,26 +349,26 @@ if (alpha > 0.0f) {
             <div class="specs-grid">
                 
                 <div class="spec-item">
-                    <div class="spec-header">/ Result 01</div>
-                    <div class="spec-value">Occlusion-Aware Pruning</div>
+                    <div class="spec-header">/ Asset Extraction</div>
+                    <div class="spec-value">Clean Geometry</div>
                     <p class="spec-desc">
-                        Algorithms automatically detect and delete internal geometry hidden inside the object, resulting in hollow, clean meshes.
+                        Clean separation of geometry without background artifacts or "floaters," enabling direct export to standard 3D engines.
                     </p>
                 </div>
 
                 <div class="spec-item">
-                    <div class="spec-header">/ Efficiency</div>
-                    <div class="spec-value highlight-metric">~40%</div>
+                    <div class="spec-header">/ Result</div>
+                    <div class="spec-value">PBR Relighting</div>
                     <p class="spec-desc">
-                        Reduction in VRAM usage during the PBR training stage due to aggressive culling of unseen points.
+                        Extracted objects react realistically to new lighting conditions because the pipeline solves for intrinsic material properties (Albedo, Roughness).
                     </p>
                 </div>
 
                 <div class="spec-item">
-                    <div class="spec-header">/ Result 02</div>
-                    <div class="spec-value">Artifact-Free Relighting</div>
+                    <div class="spec-header">/ Optimization</div>
+                    <div class="spec-value">Occlusion Pruning</div>
                     <p class="spec-desc">
-                        Extracted albedo maps are devoid of baked shadows, allowing for convincing compositing into HDR environments.
+                        Automatic detection and deletion of internal geometry hidden inside the object, resulting in lighter, hollow meshes.
                     </p>
                 </div>
 
@@ -390,22 +384,30 @@ if (alpha > 0.0f) {
         </section>
 
         <section>
-            <h2>Tech Stack</h2>
+            <h2>Build Environment</h2>
             <div class="stack-container">
                 <span class="tech-tag">Python 3.8</span>
-                <span class="tech-tag">CUDA C</span>
                 <span class="tech-tag">PyTorch</span>
-                <span class="tech-tag">Pybind11</span>
-                <span class="tech-tag">NVIDIA A100</span>
+                <span class="tech-tag">CUDA 11.6+</span>
+                <span class="tech-tag">C++14</span>
+                <span class="tech-tag">NVIDIA A100 Optimization</span>
+                <span class="tech-tag">Setuptools / CUDAExtension</span>
             </div>
         </section>
+                
+            <h2>Citations</h2>
+     <div class="footer-links">
+                <li> <a href="https://repo-sam.inria.fr/fungraph/3d-gaussian-splatting/"> Gaussian Splatting</a>
+                <li> <a href = "https://github.com/stopaimme/GI-GS"> GI-GS</a>
+                <li><a href = "https://av.dfki.de/publications/object-centric-2d-gaussian-splatting-background-removal-and-occlusion-aware-pruning-for-compact-object-models/">Object Centric 2D Gaussian Splatting</a></li>
+        </div>
+        
 
         <footer>
-            <div>&copy; 2024 Object-Centric Pipeline</div>
             <div class="footer-links">
-                <a href="#">GitHub</a>
-                <a href="#">LinkedIn</a>
-                <a href="#">Email</a>
+                <a href="https://github.com/condescendo">GitHub</a>
+                <a href="https://www.linkedin.com/in/anushree-bajaj2002/">LinkedIn</a>
+                <a href="anushreebajaj2002@gmail.com">Email</a>
             </div>
         </footer>
     </div>
