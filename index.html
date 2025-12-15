@@ -3,418 +3,169 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Object-Centric Inverse Rendering In Gaussian SPlatting </title>
+    <title>Anushree Bajaj | Portfolio</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&family=Libre+Franklin:wght@500;700;900&display=swap" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-twilight.min.css" rel="stylesheet" />
-
-    <style>
-        :root {
-            /* --- Industrial Dark Palette --- */
-            --bg-body: #050505;          
-            --grid-line: rgba(255, 255, 255, 0.07); 
-            --bg-card: #111111;          
-            --text-primary: #eeeeee;     
-            --text-secondary: #888888;   
-            
-            /* --- ACCENT COLOR --- */
-            --accent: #00ff9d; 
-            
-            --border-color: #2a2a2a;     
-            --code-bg: #080808;          
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        body {
-            background-color: var(--bg-body);
-            background-image: 
-                linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
-                linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
-            background-size: 40px 40px; 
-            background-attachment: fixed; 
-            color: var(--text-primary);
-            font-family: 'Inter', sans-serif;
-            line-height: 1.6;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            padding: 4rem 0;
-        }
-
-        .container {
-            background-color: var(--bg-card);
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 5rem 3rem;
-            border: 1px solid var(--border-color);
-            position: relative;
-            width: 95%;
-        }
-
-        section { margin-bottom: 5rem; }
-
-        /* --- Typography --- */
-        header { 
-            margin-bottom: 5rem; 
-            padding-bottom: 2rem;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        h1 {
-            font-family: 'Libre Franklin', sans-serif;
-            font-size: 3rem;
-            font-weight: 900;
-            letter-spacing: -0.04em;
-            text-transform: uppercase;
-            margin-bottom: 0.5rem;
-            color: #ffffff;
-            line-height: 1.1;
-        }
-
-        .subtitle {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 1.1rem;
-            color: var(--accent);
-            font-weight: 500;
-        }
-
-        h2 {
-            font-family: 'Libre Franklin', sans-serif;
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 2rem;
-            color: #ffffff;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-        
-        /* Decorative square before H2 */
-        h2::before {
-            content: '';
-            width: 12px;
-            height: 12px;
-            background: var(--accent);
-            display: block;
-        }
-
-        h3 {
-            font-family: 'Libre Franklin', sans-serif;
-            font-size: 1.2rem;
-            font-weight: 700;
-            margin-top: 2.5rem;
-            margin-bottom: 1rem;
-            color: var(--text-primary);
-        }
-
-        p {
-            margin-bottom: 1.25rem;
-            color: var(--text-secondary);
-            font-size: 1.05rem;
-        }
-        
-        strong { color: var(--text-primary); font-weight: 600; }
-
-        /* --- Context Log --- */
-        .context-log {
-            margin: 2rem 0;
-            border-left: 2px solid var(--border-color);
-            padding-left: 2rem;
-        }
-
-        .log-entry {
-            margin-bottom: 2rem;
-            position: relative;
-        }
-
-        .log-entry::before {
-            content: '';
-            position: absolute;
-            left: -2.4rem; 
-            top: 6px;
-            width: 10px;
-            height: 10px;
-            background: var(--bg-card);
-            border: 2px solid #444;
-            border-radius: 50%;
-        }
-
-        .log-label {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 0.5rem;
-            display: block;
-        }
-
-        .log-entry.baseline .log-label { color: #666; }
-        .log-entry.baseline p { color: #666; }
-        
-        .log-entry.target .log-label { color: var(--accent); font-weight: bold; }
-        .log-entry.target::before { border-color: var(--accent); background: var(--accent); }
-        .log-entry.target p { color: var(--text-primary); font-size: 1.1rem; }
-
-
-        /* --- Specs Grid --- */
-        .specs-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 3rem 2rem; 
-            margin-top: 2rem;
-        }
-
-        .spec-item {
-            border-top: 1px solid var(--border-color);
-            padding-top: 1rem;
-        }
-
-        .spec-header {
-            font-family: 'JetBrains Mono', monospace;
-            color: var(--text-secondary);
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            margin-bottom: 0.5rem;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .spec-value {
-            font-family: 'Libre Franklin', sans-serif;
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: #fff;
-            margin-bottom: 0.5rem;
-            line-height: 1.2;
-        }
-
-        .spec-desc {
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-            margin: 0;
-            line-height: 1.5;
-        }
-        
-        .highlight-metric {
-            color: var(--accent);
-            font-size: 2rem;
-        }
-
-        /* --- Code Blocks --- */
-        pre[class*="language-"] {
-            background: var(--code-bg) !important;
-            border: 1px solid var(--border-color);
-            margin: 1rem 0 2rem 0;
-            font-size: 0.85rem !important;
-            overflow-x: auto; 
-            text-shadow: none !important;
-        }
-        
-        .file-path {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.8rem;
-            color: var(--accent);
-            display: block;
-            margin-top: 1.5rem;
-            margin-bottom: 0.5rem;
-        }
-
-        /* --- Tags --- */
-        .stack-container { display: flex; flex-wrap: wrap; gap: 0.5rem; }
-        .tech-tag {
-            border: 1px solid #333;
-            color: #888;
-            padding: 0.2rem 0.6rem;
-            font-size: 0.8rem;
-            font-family: 'JetBrains Mono', monospace;
-        }
-
-        /* --- Footer --- */
-        footer {
-            margin-top: 4rem;
-            padding-top: 3rem;
-            border-top: 1px solid var(--border-color);
-            display: flex;
-            justify-content: space-between;
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-        }
-        .footer-links a { color: var(--text-secondary); margin-left: 20px; text-decoration: none; transition: color 0.2s;}
-        .footer-links a:hover { color: var(--accent); }
-
-        @media (max-width: 768px) {
-            .container { width: 100%; border: none; padding: 2rem 1.5rem; }
-            h1 { font-size: 2rem; }
-            .specs-grid { grid-template-columns: 1fr; gap: 2rem; }
-            footer { flex-direction: column; gap: 1rem; text-align: center; }
-            .footer-links a { margin: 0 10px; }
-        }
-    </style>
+    
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
     <div class="container">
-        <header>
-            <h1>Object-Centric<br>Inverse Rendering in Gaussian Splatting</h1>
-            <div class="subtitle">An ongoing project under the chair of Augmented Vision @ DFKI and RPTU kaiserslautern</div>
+        
+        <header class="hero">
+            <div class="hero-content">
+                <div class="status-badge">Available for Internships</div>
+                <h1>Anushree Bajaj</h1>
+                <h2 class="subtitle">M.S. Computer Science @ RPTU Kaiserslautern</h2>
+                <p class="intro-text">
+                    I am a Computer Science student focused on <strong>AI/ML model optimization</strong> and <strong>mathematical modeling</strong>. I specialize in engineering complex pipelines for 3D reconstruction and Gaussian Splatting that require rigorous parameter tuning and validation.
+                </p>
+                
+                <div class="social-links">
+                    <a href="https://github.com/condescendo" target="_blank">GitHub</a>
+                    <a href="https://linkedin.com/in/anushree-bajaj2002" target="_blank">LinkedIn</a>
+                    <a href="mailto:anushreebajaj2002@gmail.com">Email</a>
+                </div>
+            </div>
+            
+            <div class="hero-image-container">
+                <div class="image-placeholder">
+                    <span></span>
+                </div>
+            </div>
         </header>
 
-        <section>
-            <h2>Core Objective</h2>
-            <p>
-                This project engineers a low-level extension to the Global Illumination Gaussian Splatting (GI-GS) pipeline. By mathematically decomposing scenes into discrete <strong>"Object"</strong> and <strong>"Background"</strong> entities at the rasterization level, we move beyond simple view synthesis to full inverse rendering.
-            </p>
+        <hr class="divider">
+
+        <section id="projects">
+            <h2 class="section-title">Selected Works</h2>
             
-
-            <div class="context-log">
+            <div class="projects-grid">
                 
-                <div class="log-entry baseline">
-                    <span class="log-label">Standard Pipeline</span>
-                    <p>Traditional 3DGS bakes lighting and geometry into a single representation. The scene is static; objects cannot be moved, and lighting cannot be changed without significant artifacts.</p>
-                </div>
+                <article class="project-card">
+                    <div class="card-header">
+                        <h3>Object-Centric Inverse Rendering</h3>
+                        <span class="year">2024</span>
+                    </div>
+                    <p class="card-desc">
+                        A low-level extension to Gaussian Splatting (GI-GS) that decomposes scenes into discrete entities for physically-based relighting and object extraction.
+                    </p>
+                    <div class="tech-stack">
+                        <span>Python</span><span>CUDA</span><span>C++</span>
+                    </div>
+                    <a href="project-gaussian.html" class="btn-link">View Analysis &rarr;</a>
+                </article>
 
-                <div class="log-entry target">
-                    <span class="log-label">This Extension</span>
-                    <p>Allows for <strong>Asset Extraction</strong> without background artifacts, <strong>Scene Compositing</strong> into novel environments, and <strong>Physically-Based Relighting</strong> by solving for material properties (Albedo, Roughness, Metallic).</p>
-                </div>
+                <article class="project-card">
+                    <div class="card-header">
+                        <h3>3D Scene Reconstruction</h3>
+                        <span class="year">2024</span>
+                    </div>
+                    <p class="card-desc">
+                        A computer vision pipeline generating dense 3D point clouds from 2D image sets by matching features across distorted images.
+                    </p>
+                    <div class="tech-stack">
+                        <span>OpenCV</span><span>Python</span><span>NumPy</span>
+                    </div>
+                    <a href="#" class="btn-link disabled">Coming Soon &rarr;</a>
+                </article>
+
+                <article class="project-card">
+                    <div class="card-header">
+                        <h3>LLM Fine-tuning Pipeline</h3>
+                        <span class="year">2023</span>
+                    </div>
+                    <p class="card-desc">
+                        Engineered a LoRa fine-tuning pipeline for domain-specific German-to-French translation, augmented with synthetic data.
+                    </p>
+                    <div class="tech-stack">
+                        <span>Hugging Face</span><span>Groq</span><span>Streamlit</span>
+                    </div>
+                    <a href="#" class="btn-link disabled">Coming Soon &rarr;</a>
+                </article>
+
+                <article class="project-card">
+                    <div class="card-header">
+                        <h3>RAG Style Transfer</h3>
+                        <span class="year">2023</span>
+                    </div>
+                    <p class="card-desc">
+                        A hybrid retrieval system using ChromaDB and BM25 to generate text that mimics custom, user-defined writing styles.
+                    </p>
+                    <div class="tech-stack">
+                        <span>LangChain</span><span>OpenAI API</span><span>RAG</span>
+                    </div>
+                    <a href="#" class="btn-link disabled">Coming Soon &rarr;</a>
+                </article>
 
             </div>
         </section>
 
-        <section>
-            <h2>Systems Engineering & CUDA Architecture</h2>
-            <p>
-                The primary contribution is not just calling PyTorch functions, but modifying the underlying C++/CUDA rasterization backend to support dynamic visibility tracking and memory management.
-            </p>
-            
+        <hr class="divider">
 
-            <h3>1. Custom CUDA Kernels</h3>
-            <p>
-                To achieve object isolation without expensive post-processing, I rewrote the core <code>renderCUDA</code> kernel. 
-            </p>
-            <ul>
-                <li><strong>Device Memory Management:</strong> Allocated a custom boolean tensor (<code>seen</code>) directly on the GPU to track per-Gaussian visibility persistence across the training lifecycle.</li>
-                <li><strong>Zero-Copy Logic:</strong> Visibility logic remains entirely on the GPU during the forward pass, syncing to the host (Python) only when topological changes (pruning) are required.</li>
-            </ul>
-
-            <h3>2. Implementation Snapshot: Thread-Level Visibility</h3>
-            <p>
-                By injecting logic into the forward rasterization pass, the kernel now performs atomic checks. If a thread contributes to a pixel (alpha > threshold), it writes directly to the global memory buffer.
-            </p>
-
-            <span class="file-path">submodules/diff-gaussian-rasterization/cuda_rasterizer/forward.cu</span>
-<pre><code class="language-cpp">// Snippet from Inverse Renderer: Calculating thread indices for Gaussian buffer updates
-// Inside __global__ void renderCUDA(...)
-
-// 1. Calculate pixel and thread identifiers
-auto block = cg::this_thread_block();
-uint32_t pix_id = W * pix.y + pix.x;
-
-// 2. Iterate over Gaussian batches (Collaborative fetching)
-for (int i = 0; i < rounds; i++, toDo -= BLOCK_SIZE) {
-    __syncthreads(); // Sync shared memory load
-
-    // 3. Per-thread processing
-    for (int j = 0; !done && j < min(BLOCK_SIZE, toDo); j++) {
-        
-        // Compute alpha contribution (Equation 2 from 3DGS paper)
-        float alpha = min(0.99f, con_o.w * exp(power));
-        
-        // CUSTOM VISIBILITY LOGIC:
-        // Direct buffer access to mark geometry as 'seen' if it contributes to the pixel.
-        // Utilizes the rasterizer's inherent depth ordering to avoid raycasting.
-        if (alpha > 0.0f) {
-            seen[collected_id[j]] = true; 
-        }
-        // ... (Standard blending continues) ...
-    }
-}</code></pre>
-
-            <h3>3. Optimization & Data Flow</h3>
-            <p>
-                <strong>Occlusion-Aware Pruning:</strong> A Python-side controller aggregates the CUDA-generated <code>seen</code> tensor via C++ bindings. Points that fail to register a true status in the GPU buffer are pruned, reducing VRAM usage and eliminating internal geometry artifacts.
-            </p>
-            <p>
-                <strong>Masked PBR Loss:</strong> I engineered a custom loss pipeline that applies segmentation masks before gradient calculation. This stabilizes the non-convex optimization of PBR parameters (Albedo, Roughness) by preventing the solver from fitting noise in empty space.
-            </p>
-        </section>
-
-        <section>
-            <h2>Key Results</h2>
-            
-            <div class="specs-grid">
+        <section id="skills">
+            <h2 class="section-title">Technical Arsenal</h2>
+            <div class="skills-grid">
                 
-                <div class="spec-item">
-                    <div class="spec-header">/ Asset Extraction</div>
-                    <div class="spec-value">Clean Geometry</div>
-                    <p class="spec-desc">
-                        Clean separation of geometry without background artifacts or "floaters," enabling direct export to standard 3D engines.
-                    </p>
+                <div class="skill-category">
+                    <h4>Languages</h4>
+                    <ul>
+                        <li>Python</li>
+                        <li>C++</li>
+                        <li>CUDA</li>
+                        <li>GLSL</li>
+                        <li>SQL</li>
+                    </ul>
                 </div>
 
-                <div class="spec-item">
-                    <div class="spec-header">/ Result</div>
-                    <div class="spec-value">PBR Relighting</div>
-                    <p class="spec-desc">
-                        Extracted objects react realistically to new lighting conditions because the pipeline solves for intrinsic material properties (Albedo, Roughness).
-                    </p>
+                <div class="skill-category">
+                    <h4>AI & GenAI</h4>
+                    <ul>
+                        <li>PyTorch</li>
+                        <li>LangChain</li>
+                        <li>Hugging Face</li>
+                        <li>OpenAI API</li>
+                        <li>NLTK</li>
+                    </ul>
                 </div>
 
-                <div class="spec-item">
-                    <div class="spec-header">/ Optimization</div>
-                    <div class="spec-value">Occlusion Pruning</div>
-                    <p class="spec-desc">
-                        Automatic detection and deletion of internal geometry hidden inside the object, resulting in lighter, hollow meshes.
-                    </p>
+                <div class="skill-category">
+                    <h4>Computer Vision</h4>
+                    <ul>
+                        <li>OpenCV</li>
+                        <li>Gaussian Splatting</li>
+                        <li>3D Reconstruction</li>
+                        <li>Inverse Rendering</li>
+                    </ul>
                 </div>
 
-                <div class="spec-item">
-                    <div class="spec-header">/ Pipeline</div>
-                    <div class="spec-value">Pybind11 Integration</div>
-                    <p class="spec-desc">
-                        Seamless bridge allowing Python to control high-level topology logic while C++ handles the heavy pixel-wise atomic operations.
-                    </p>
+                <div class="skill-category">
+                    <h4>Backend & Ops</h4>
+                    <ul>
+                        <li>Flask</li>
+                        <li>Apache Kafka</li>
+                        <li>Docker</li>
+                        <li>AWS (Cloud)</li>
+                        <li>Git</li>
+                    </ul>
                 </div>
 
             </div>
         </section>
-
-        <section>
-            <h2>Build Environment</h2>
-            <div class="stack-container">
-                <span class="tech-tag">Python 3.8</span>
-                <span class="tech-tag">PyTorch</span>
-                <span class="tech-tag">CUDA 11.6+</span>
-                <span class="tech-tag">C++14</span>
-                <span class="tech-tag">NVIDIA A100 Optimization</span>
-                <span class="tech-tag">Setuptools / CUDAExtension</span>
-            </div>
-        </section>
-                
-            <h2>Citations</h2>
-     <div class="footer-links">
-                <li> <a href="https://repo-sam.inria.fr/fungraph/3d-gaussian-splatting/"> Gaussian Splatting</a>
-                <li> <a href = "https://github.com/stopaimme/GI-GS"> GI-GS</a>
-                <li><a href = "https://av.dfki.de/publications/object-centric-2d-gaussian-splatting-background-removal-and-occlusion-aware-pruning-for-compact-object-models/">Object Centric 2D Gaussian Splatting</a></li>
-        </div>
-        
 
         <footer>
-            <div class="footer-links">
-                <a href="https://github.com/condescendo">GitHub</a>
-                <a href="https://www.linkedin.com/in/anushree-bajaj2002/">LinkedIn</a>
-                <a href="anushreebajaj2002@gmail.com">Email</a>
+            <div class="footer-content">
+                <p>&copy; 2025 Anushree Bajaj. Built with &lt;3 in Kaiserslautern.</p>
+                <div class="footer-links">
+                    <a href="https://linkedin.com/in/anushree-bajaj2002">LinkedIn</a>
+                    <a href="https://github.com/condescendo">GitHub</a>
+                </div>
             </div>
         </footer>
-    </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-c.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-cpp.min.js"></script>
+    </div>
 </body>
 </html>
