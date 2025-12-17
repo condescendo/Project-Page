@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Semantic Segmentation U-Net | Portfolio</title>
+    <title>3D Reconstruction | Portfolio</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -27,137 +27,123 @@
     <div class="container project-view">
         
         <header>
-            <h1>Semantic<br>Segmentation</h1>
-            <div class="subtitle">Dense Prediction with U-Net Architecture</div>
+            <h1>3D<br>Reconstruction</h1>
+            <div class="subtitle">Structure from Motion & Photogrammetry</div>
             
             <div class="stack-container">
-                <span class="tech-tag">PyTorch</span>
-                <span class="tech-tag">Computer Vision</span>
+                <span class="tech-tag">Python</span>
+                <span class="tech-tag">OpenCV</span>
+                <span class="tech-tag">Epipolar Geometry</span>
                 <span class="tech-tag">NumPy</span>
-                <span class="tech-tag">Matplotlib</span>
-                <span class="tech-tag">Deep Learning</span>
+                <span class="tech-tag">Point Clouds</span>
             </div>
         </header>
 
         <section id="executive-summary">
             <h3>// Executive Summary</h3>
-            <p>While standard object detection identifies bounding boxes, this project solves <strong>Dense Prediction</strong>: classifying every individual pixel in an image. I implemented a custom U-Net architecture from scratch in PyTorch to perform semantic segmentation. The model utilizes a fully convolutional encoder-decoder structure with skip connections to preserve high-frequency spatial details often lost during downsampling.</p>
+            <p>This project implements a complete <strong>Structure from Motion (SfM)</strong> pipeline to reconstruct 3D scenes from uncalibrated 2D image sequences. By extracting invariant features and estimating the geometric relationship between camera views, the system mathematically triangulates 3D points in space. The result is a sparse point cloud that represents the scene structure and the camera trajectory.</p>
         </section>
 
         <section id="phase-1">
-            <h2>Phase I: The Architecture</h2>
-            <p><strong>Focus:</strong> Encoder-Decoder Design & Skip Connections</p>
-            <p>The U-Net architecture (Ronneberger et al.) consists of a contracting path (encoder) to capture context and a symmetric expanding path (decoder) that enables precise localization.</p>
+            <h2>Phase I: Feature Extraction & Matching</h2>
+            <p><strong>Focus:</strong> SIFT Descriptors & FLANN Matching</p>
+            <p>The first step is identifying unique points in disparate images. I utilized <strong>SIFT (Scale-Invariant Feature Transform)</strong> to detect keypoints that are robust to rotation and scaling.</p>
 
             <div class="media-wrapper">
                 <div class="diagram-placeholder">
                     
                 </div>
-                <div class="caption">Figure 1: U-Net Architecture (Contracting & Expanding Paths)</div>
+                <div class="caption">Figure 1: Feature Correspondence via SIFT</div>
             </div>
 
             <ul>
-                <li><strong>The Encoder:</strong> Acts as a feature extractor. It repeatedly applies two 3x3 convolutions followed by a ReLU and a 2x2 max pooling operation for downsampling ($H_{out} = H_{in} / 2$).</li>
-                <li><strong>The Bottleneck:</strong> The deepest layer of the network representing the most abstract, high-level features of the image.</li>
-                <li><strong>The Decoder:</strong> Upsamples the feature map ($2 \times$ scale) and concatenates it with the corresponding feature map from the encoder (Skip Connection) to recover spatial resolution.</li>
+                <li><strong>Keypoint Detection:</strong> Identifying distinct corners and blobs in the image pyramid (Scale Space).</li>
+                <li><strong>Feature Matching:</strong> Used the <strong>FLANN</strong> (Fast Library for Approximate Nearest Neighbors) matcher to find correspondences between image pairs based on descriptor vectors.</li>
+                <li><strong>Ratio Test:</strong> Filtered weak matches by checking if the closest neighbor distance is significantly smaller than the second closest (Lowe's Ratio Test).</li>
             </ul>
 
-            <span class="code-label">model.py / Forward Pass</span>
-            <pre><code class="language-python">def forward(self, x):
-    # --- Encoder (Contracting Path) ---
-    x1 = self.inc(x)
-    x2 = self.down1(x1)
-    x3 = self.down2(x2)
-    x4 = self.down3(x3)
-    x5 = self.down4(x4) # Bottleneck
-    
-    # --- Decoder (Expanding Path with Skips) ---
-    x = self.up1(x5, x4) # Concatenates x4 (skip) with upsampled x5
-    x = self.up2(x, x3)
-    x = self.up3(x, x2)
-    x = self.up4(x, x1)
-    
-    # Final 1x1 Conv to map to N_Classes
-    logits = self.outc(x)
-    return logits</code></pre>
+            <span class="code-label">features.py / SIFT Extraction</span>
+            <pre><code class="language-python"># Initialize SIFT detector
+sift = cv2.SIFT_create()
+
+# Detect keypoints and compute descriptors
+kp1, des1 = sift.detectAndCompute(img1, None)
+kp2, des2 = sift.detectAndCompute(img2, None)
+
+# FLANN Parameters for KD-Tree indexing
+index_params = dict(algorithm=1, trees=5)
+search_params = dict(checks=50)
+flann = cv2.FlannBasedMatcher(index_params, search_params)
+
+matches = flann.knnMatch(des1, des2, k=2)</code></pre>
         </section>
 
         <section id="phase-2">
-            <h2>Phase II: Data Pipeline</h2>
-            <p><strong>Focus:</strong> Custom Datasets & Tensors</p>
-            <p>Deep Learning performance relies on data quality. I implemented a custom `torch.utils.data.Dataset` class to handle image-mask pairs. Unlike classification where labels are integers, here labels are 2D segmentation masks.</p>
-
-            <ul>
-                <li><strong>Normalization:</strong> Input images are normalized to Mean $\mu=0$ and Std $\sigma=1$ to ensure stable gradient descent.</li>
-                <li><strong>Augmentation:</strong> Applied random rotations and horizontal flips to reduce overfitting, ensuring the transformation applied to the image is identically applied to the mask.</li>
-            </ul>
-
-            <span class="code-label">dataset.py / Tensor Conversion</span>
-            <pre><code class="language-python">def __getitem__(self, idx):
-    img = load_image(self.images[idx])
-    mask = load_mask(self.masks[idx])
-
-    if self.transform:
-        # Albumentations handles dual-transform of img + mask
-        augmented = self.transform(image=img, mask=mask)
-        img = augmented['image']
-        mask = augmented['mask']
-
-    # Permute dimensions: (H, W, C) -> (C, H, W) for PyTorch
-    return img.permute(2, 0, 1), mask.long()</code></pre>
-        </section>
-
-        <section id="phase-3">
-            <h2>Phase III: Training Dynamics</h2>
-            <p><strong>Focus:</strong> Loss Functions & Optimization</p>
-            <p>Training a pixel-wise classifier requires specific loss functions. I experimented with standard Cross-Entropy and Dice Loss to handle class imbalance (e.g., small objects in large backgrounds).</p>
+            <h2>Phase II: Epipolar Geometry</h2>
+            <p><strong>Focus:</strong> Essential Matrix & RANSAC</p>
+            <p>To recover depth, we must understand the geometric relationship between two camera views. I computed the <strong>Essential Matrix ($E$)</strong>, which encodes the rotation and translation between views.</p>
             
             <div class="media-wrapper">
                 <div class="diagram-placeholder">
                     
                 </div>
-                <div class="caption">Figure 2: Loss Convergence Analysis</div>
+                <div class="caption">Figure 2: Epipolar Constraint & Triangulation</div>
             </div>
 
             <ul>
-                <li><strong>Optimization:</strong> Used the **Adam** optimizer with a learning rate of $1e-4$ and weight decay for regularization.</li>
-                <li><strong>Metric:</strong> Evaluated using the **Dice Coefficient** (F1 Score), which measures the overlap between the predicted segmentation mask and the ground truth.</li>
+                <li><strong>RANSAC Loop:</strong> Used Random Sample Consensus to robustly estimate the Essential Matrix, rejecting outlier matches that don't satisfy the epipolar constraint ($x'^T E x = 0$).</li>
+                <li><strong>Pose Recovery:</strong> Decomposed the matrix $E$ using Singular Value Decomposition (SVD) to recover the relative Camera Rotation ($R$) and Translation ($t$).</li>
             </ul>
 
-            <span class="code-label">train.py / Optimization Step</span>
-            <pre><code class="language-python">for epoch in range(epochs):
-    net.train()
-    for batch in dataloader:
-        imgs = batch['image'].to(device)
-        true_masks = batch['mask'].to(device)
+            <span class="code-label">geometry.py / Pose Estimation</span>
+            <pre><code class="language-python"># Compute Essential Matrix with RANSAC
+E, mask = cv2.findEssentialMat(pts1, pts2, focal_length, principal_point, 
+                               method=cv2.RANSAC, prob=0.999, threshold=1.0)
 
-        # 1. Forward Pass
-        masks_pred = net(imgs)
-        
-        # 2. Compute Loss (Cross Entropy + Dice)
-        loss = criterion(masks_pred, true_masks)
-        
-        # 3. Backpropagation
-        optimizer.zero_grad()
-        loss.backward()
-        optimizer.step()</code></pre>
+# Recover Rotation (R) and Translation (t)
+_, R, t, mask = cv2.recoverPose(E, pts1, pts2, focal_length, principal_point)
+
+# Projection Matrices
+P1 = np.hstack((np.eye(3), np.zeros((3, 1))))
+P2 = np.hstack((R, t))</code></pre>
         </section>
 
-        <section id="phase-4">
-            <h2>Phase IV: Inference & Results</h2>
-            <p><strong>Focus:</strong> Visualization & Mask Overlay</p>
-            <p>The final model successfully delineates boundaries between classes. Below is a comparison of the raw input, the ground truth annotation, and the model's prediction.</p>
+        <section id="phase-3">
+            <h2>Phase III: Triangulation & Bundling</h2>
+            <p><strong>Focus:</strong> Sparse Point Cloud Generation</p>
+            <p>With the camera poses known, I performed <strong>Linear Triangulation</strong>. By back-projecting rays from matching pixels in two cameras, their intersection in 3D space defines a scene point.</p>
 
             <div class="media-wrapper">
                 <div class="diagram-placeholder">
                     
                 </div>
-                <div class="caption">Figure 3: Inference Results (Input / Truth / Predicted)</div>
+                <div class="caption">Figure 3: Reconstructed Sparse Point Cloud</div>
             </div>
 
             <ul>
-                <li><strong>IoU Score:</strong> Achieved an Intersection over Union (IoU) of <strong>0.82</strong> on the test set.</li>
-                <li><strong>Generalization:</strong> The model robustly handles variations in lighting and orientation due to the extensive augmentation pipeline.</li>
+                <li><strong>Triangulation:</strong> Solved the linear equation system $AX = 0$ (via SVD) to find the 3D coordinates ($X, Y, Z$) for every matched keypoint.</li>
+                <li><strong>Reprojection Error:</strong> Validated the accuracy by projecting the 3D points back onto the 2D images and measuring the pixel distance drift.</li>
+            </ul>
+
+            <span class="code-label">reconstruction.py / Linear Triangulation</span>
+            <pre><code class="language-python">def triangulate_points(P1, P2, pts1, pts2):
+    # Triangulate points in Homogeneous coords (4D)
+    points_4d = cv2.triangulatePoints(P1, P2, pts1.T, pts2.T)
+    
+    # Convert to Euclidean (3D) by dividing by w
+    points_3d = points_4d[:3] / points_4d[3]
+    
+    return points_3d.T</code></pre>
+        </section>
+
+        <section id="phase-4">
+            <h2>Phase IV: Visualization</h2>
+            <p><strong>Focus:</strong> Open3D & Ply Export</p>
+            <p>The final dataset is a list of 3D coordinates. To visualize the structure, I utilized <strong>Open3D</strong> to render the point cloud and export it to standard formats (.ply) for further processing (e.g., Poisson Surface Reconstruction).</p>
+
+            <ul>
+                <li><strong>Outlier Removal:</strong> Applied statistical outlier removal to clean noise from the point cloud before rendering.</li>
+                <li><strong>Result:</strong> Successfully reconstructed the 3D geometry of static objects from handheld video footage.</li>
             </ul>
         </section>
         
